@@ -1,0 +1,38 @@
+.auth-page {
+  min-height: calc(100vh - 200px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 50px 16px;
+  background: linear-gradient(135deg, var(--bg-warm) 0%, #eedfc6 100%);
+}
+.auth-card {
+  background: white; border-radius: var(--radius);
+  box-shadow: var(--shadow-lg); padding: 44px;
+  width: 100%; max-width: 460px;
+  border: 1px solid var(--border-light);
+}
+.auth-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 18px; font-weight: 700; color: var(--text);
+  margin-bottom: 28px; font-family: var(--font-head);
+}
+.auth-logo-icon {
+  width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--accent));
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 18px;
+}
+.auth-card h2 { font-size: 28px; font-family: var(--font-head); margin-bottom: 6px; }
+.auth-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+.auth-link { text-align: center; font-size: 14px; margin-top: 20px; color: var(--text-muted); }
+.auth-link a { color: var(--primary); font-weight: 600; }
+.auth-link a:hover { color: var(--primary-dark); }
+
+.login-tabs {
+  display: flex; gap: 4px; background: var(--bg-warm);
+  padding: 4px; border-radius: 50px; margin-bottom: 24px;
+}
+.login-tabs button {
+  flex: 1; padding: 10px; border: none; background: transparent;
+  border-radius: 50px; cursor: pointer; font-weight: 600; font-size: 14px;
+  transition: all 0.2s; color: var(--text-muted); font-family: var(--font-body);
+}
+.login-tabs button.active { background: white; color: var(--primary); box-shadow: var(--shadow); }

@@ -1,0 +1,84 @@
+/* ===== PROFILE LAYOUT ===== */
+.profile-page { background: var(--bg); }
+.profile-layout { display: grid; grid-template-columns: 280px 1fr; gap: 28px; align-items: start; }
+
+/* Sidebar */
+.profile-sidebar { position: sticky; top: 100px; }
+.profile-user-card {
+  background: linear-gradient(145deg, var(--primary), var(--accent));
+  border-radius: var(--radius); padding: 28px 20px; text-align: center;
+  color: white; margin-bottom: 12px;
+  box-shadow: 0 8px 30px rgba(200,97,26,0.3);
+}
+.profile-avatar {
+  width: 72px; height: 72px; background: rgba(255,255,255,0.25);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 700; margin: 0 auto 14px;
+  border: 3px solid rgba(255,255,255,0.4);
+}
+.profile-user-name { font-size: 18px; font-weight: 700; font-family: var(--font-head); margin-bottom: 4px; }
+.profile-user-email { font-size: 13px; opacity: 0.85; }
+
+.profile-nav-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow-card); overflow: hidden; border: 1px solid var(--border-light); }
+.profile-nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 20px; font-size: 14px; font-weight: 500;
+  border-bottom: 1px solid var(--border-light);
+  transition: all 0.15s; cursor: pointer; color: var(--text);
+  background: none; border-left: none; border-right: none; border-top: none;
+  width: 100%; text-align: left; font-family: var(--font-body);
+}
+.profile-nav-item:last-child { border-bottom: none; }
+.profile-nav-item:hover { background: var(--bg-warm); color: var(--primary); }
+.profile-nav-item.active { background: #fde8d8; color: var(--primary); font-weight: 600; }
+.profile-nav-item.active .nav-icon { color: var(--primary); }
+.nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.profile-nav-item.danger { color: var(--danger); }
+.profile-nav-item.danger:hover { background: #fee2e2; }
+
+/* Content */
+.profile-content-card {
+  background: white; border-radius: var(--radius);
+  box-shadow: var(--shadow-card); padding: 32px;
+  border: 1px solid var(--border-light);
+}
+.profile-section-title {
+  font-size: 22px; font-family: var(--font-head);
+  color: var(--text); margin-bottom: 6px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 24px;
+}
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.form-row-2 .form-group, .form-row-3 .form-group { margin-bottom: 0; }
+
+/* Orders page */
+.orders-empty { text-align: center; padding: 60px 20px; }
+.orders-empty .empty-icon { font-size: 60px; margin-bottom: 16px; }
+.orders-list { display: flex; flex-direction: column; gap: 16px; }
+.order-card-ui {
+  background: white; border-radius: var(--radius); padding: 20px 24px;
+  box-shadow: var(--shadow-card); border: 1px solid var(--border-light);
+  transition: box-shadow 0.2s;
+}
+.order-card-ui:hover { box-shadow: var(--shadow-lg); }
+.order-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.order-id-text { font-size: 14px; font-weight: 700; color: var(--text); }
+.order-date-text { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.order-items-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.order-chip {
+  background: var(--bg-warm); padding: 5px 12px; border-radius: 20px;
+  font-size: 12px; color: var(--text); font-weight: 500;
+}
+.order-footer-row { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border-light); }
+.order-addr-text { font-size: 13px; color: var(--text-muted); }
+.order-total-text { font-size: 18px; font-weight: 700; color: var(--primary); }
+
+@media (max-width: 900px) {
+  .profile-layout { grid-template-columns: 1fr; }
+  .profile-sidebar { position: static; }
+  .profile-nav-card { display: flex; overflow-x: auto; border-radius: var(--radius-sm); }
+  .profile-nav-item { flex-direction: column; gap: 4px; padding: 12px 16px; min-width: 90px; border-bottom: none !important; border-right: 1px solid var(--border-light); font-size: 12px; text-align: center; }
+  .profile-content-card { padding: 20px; }
+  .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
+}
