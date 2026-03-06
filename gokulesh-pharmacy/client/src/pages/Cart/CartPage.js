@@ -7,7 +7,7 @@ import './CartPage.css';
 const PLACEHOLDER = 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=200&q=80';
 
 export default function CartPage() {
-  const { items, total, removeItem, updateQty, clearCart } = useCart();
+  const { items, subtotal, discount, discountedSubtotal, couponCode, removeItem, updateQty, clearCart } = useCart();
 
   if (items.length === 0) {
     return (
@@ -24,8 +24,8 @@ export default function CartPage() {
     );
   }
 
-  const shipping = total >= 499 ? 0 : 60;
-  const grandTotal = total + shipping;
+  const shipping = subtotal >= 499 ? 0 : 60;
+  const grandTotal = discountedSubtotal + shipping;
 
   return (
     <div className="page">
@@ -68,14 +68,20 @@ export default function CartPage() {
             <h3>Order Summary</h3>
             <div className="summary-line">
               <span>Subtotal ({items.reduce((s, i) => s + i.qty, 0)} items)</span>
-              <span>₹{total}</span>
+              <span>₹{subtotal}</span>
             </div>
+            {discount > 0 && (
+              <div className="summary-line">
+                <span>Coupon {couponCode} Applied</span>
+                <span style={{ color: 'var(--success)', fontWeight: 700 }}>-₹{discount}</span>
+              </div>
+            )}
             <div className="summary-line">
               <span>Delivery</span>
               <span className={shipping === 0 ? 'free-text' : ''}>{shipping === 0 ? '🎉 FREE' : `₹${shipping}`}</span>
             </div>
             {shipping > 0 && (
-              <div className="free-ship-note">🚚 Add ₹{499 - total} more for FREE delivery!</div>
+              <div className="free-ship-note">🚚 Add ₹{499 - subtotal} more for FREE delivery!</div>
             )}
             <div className="summary-line total">
               <span>Total</span>

@@ -1,7 +1,7 @@
 const express = require('express');
 const { MetaInfo, StandardCheckoutPayRequest } = require('pg-sdk-node');
 const { protect } = require('../middleware/auth');
-const { createOrderForUser, OrderError } = require('../services/orderService');
+const { createOrderForUser, quoteOrderForUser, OrderError } = require('../services/orderService');
 const { getPhonePeClient, ensurePhonePeConfigured } = require('../config/phonepeClient');
 
 const router = express.Router();
@@ -10,12 +10,16 @@ const router = express.Router();
 // Creates a PhonePe Standard Checkout order and returns redirect URL
 router.post('/phonepe/order', protect, async (req, res) => {
   try {
-    const { amount } = req.body;
-    if (!amount || amount <= 0) {
-      return res.status(400).json({ message: 'Invalid payment amount' });
-    }
-
+    // If gateway isn't configured, return a friendly message (don't confuse user with amount errors)
     ensurePhonePeConfigured();
+
+    const { amount, items } = req.body;
+    const quoted = Array.isArray(items) && items.length ? await quoteOrderForUser({ items }) : null;
+    const finalAmount = quoted ? quoted.totalAmount : amount;
+
+    if (!finalAmount || Number.isNaN(Number(finalAmount)) || Number(finalAmount) <= 0) {
+      return res.status(400).json({ message: 'Invalid payment amount. Please try again.' });
+    }
     const client = getPhonePeClient();
 
     const merchantOrderId = `ORD_${Date.now()}_${String(req.user._id).slice(-6)}`;
@@ -26,7 +30,7 @@ router.post('/phonepe/order', protect, async (req, res) => {
 
     const request = StandardCheckoutPayRequest.builder()
       .merchantOrderId(merchantOrderId)
-      .amount(Math.round(amount * 100)) // amount in paisa
+      .amount(Math.round(Number(finalAmount) * 100)) // amount in paisa
       .redirectUrl(redirectUrl)
       .metaInfo(metaInfo)
       .build();
@@ -35,7 +39,8 @@ router.post('/phonepe/order', protect, async (req, res) => {
 
     res.json({
       checkoutUrl: response.redirect_url || response.redirectUrl,
-      merchantOrderId
+      merchantOrderId,
+      amount: Number(finalAmount)
     });
   } catch (err) {
     if (err.message === 'PhonePe gateway not configured') {

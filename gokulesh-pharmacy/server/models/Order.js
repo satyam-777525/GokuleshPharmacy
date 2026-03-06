@@ -20,6 +20,10 @@ const orderSchema = new mongoose.Schema({
     pincode: { type: String, required: true },
     country: { type: String, default: 'India' }
   },
+  subtotalAmount: { type: Number, required: true },
+  shippingAmount: { type: Number, required: true },
+  discountAmount: { type: Number, required: true },
+  couponCode: { type: String },
   totalAmount: { type: Number, required: true },
   status: {
     type: String,

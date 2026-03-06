@@ -2,6 +2,12 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 const CartContext = createContext();
 
+const AUTO_COUPON = {
+  code: 'GOKULESH10',
+  minSubtotal: 999,
+  percentOff: 10,
+};
+
 const cartReducer = (state, action) => {
   switch (action.type) {
     case 'ADD_ITEM': {
@@ -45,11 +51,29 @@ export const CartProvider = ({ children }) => {
   const updateQty = (id, qty) => dispatch({ type: 'UPDATE_QTY', payload: { id, qty } });
   const clearCart = () => dispatch({ type: 'CLEAR_CART' });
 
-  const total = state.items.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const subtotal = state.items.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const isAutoCouponEligible = subtotal >= AUTO_COUPON.minSubtotal;
+  const couponCode = isAutoCouponEligible ? AUTO_COUPON.code : null;
+  const discount = isAutoCouponEligible ? Math.round((subtotal * AUTO_COUPON.percentOff) / 100) : 0;
+  const discountedSubtotal = Math.max(0, subtotal - discount);
+
   const count = state.items.reduce((sum, i) => sum + i.qty, 0);
 
   return (
-    <CartContext.Provider value={{ ...state, total, count, addItem, removeItem, updateQty, clearCart }}>
+    <CartContext.Provider
+      value={{
+        ...state,
+        subtotal,
+        discount,
+        discountedSubtotal,
+        couponCode,
+        count,
+        addItem,
+        removeItem,
+        updateQty,
+        clearCart
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

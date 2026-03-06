@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import './CheckoutPage.css';
 
 export default function CheckoutPage() {
-  const { items, total, clearCart } = useCart();
+  const { items, subtotal, discount, discountedSubtotal, couponCode, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -20,8 +20,8 @@ export default function CheckoutPage() {
     notes: ''
   });
 
-  const shipping = total >= 499 ? 0 : 60;
-  const grandTotal = total + shipping;
+  const shipping = subtotal >= 499 ? 0 : 60;
+  const grandTotal = discountedSubtotal + shipping;
   const ch = (k) => e => setForm(p => ({ ...p, [k]: e.target.value }));
 
   const validateAddress = () => {
@@ -75,7 +75,9 @@ export default function CheckoutPage() {
 
     setOnlinePayLoading(true);
     try {
-      const orderRes = await createPhonePeOrder({ amount: grandTotal });
+      const orderRes = await createPhonePeOrder({
+        items: items.map(i => ({ product: i._id, quantity: i.qty })),
+      });
       const { checkoutUrl, merchantOrderId } = orderRes.data;
 
       const payload = {
@@ -166,14 +168,20 @@ export default function CheckoutPage() {
               </div>
             ))}
             <div style={{ height: 8 }} />
-            <div className="co-item"><span>Subtotal</span><span>₹{total}</span></div>
+            <div className="co-item"><span>Subtotal</span><span>₹{subtotal}</span></div>
+            {discount > 0 && (
+              <div className="co-item">
+                <span>Coupon {couponCode}</span>
+                <span style={{ color: 'var(--success)', fontWeight: 700 }}>-₹{discount}</span>
+              </div>
+            )}
             <div className="co-item">
               <span>Delivery</span>
               <span style={shipping === 0 ? { color: 'var(--success)', fontWeight: 700 } : {}}>
                 {shipping === 0 ? '🎉 FREE' : `₹${shipping}`}
               </span>
             </div>
-            {shipping > 0 && <p style={{ fontSize: 12, color: '#92400e', background: '#fef9c3', padding: '8px 12px', borderRadius: 8, margin: '6px 0' }}>Add ₹{499 - total} more for FREE delivery!</p>}
+            {shipping > 0 && <p style={{ fontSize: 12, color: '#92400e', background: '#fef9c3', padding: '8px 12px', borderRadius: 8, margin: '6px 0' }}>Add ₹{499 - subtotal} more for FREE delivery!</p>}
             <div className="co-item co-total"><span>Total</span><span>₹{grandTotal}</span></div>
             <button
               type="submit"

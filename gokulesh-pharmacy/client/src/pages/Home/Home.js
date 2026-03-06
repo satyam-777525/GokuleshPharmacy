@@ -202,8 +202,8 @@ export default function Home() {
       <div className="container">
         <div className="promo-banner">
           <div className="promo-text">
-            <h2>Get 10% Off Your First Order!</h2>
-            <p>Use code below at checkout. Valid on orders above ₹299</p>
+            <h2>Get 10% off automatically on orders above ₹999!</h2>
+            <p>Use code below at checkout. Valid on orders above ₹999</p>
             <div className="promo-code">GOKULESH10</div>
           </div>
           <Link to="/products" className="btn btn-lg" style={{ background: 'white', color: 'var(--primary)', flexShrink: 0 }}>

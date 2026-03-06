@@ -9,22 +9,24 @@ class OrderError extends Error {
   }
 }
 
-async function createOrderForUser({
-  userId,
-  items,
-  shippingAddress,
-  notes,
-  paymentMethod = 'COD',
-  paymentDetails
-}) {
-  if (!items?.length) {
-    throw new OrderError('No items in order');
-  }
-  if (!shippingAddress?.mobile) {
-    throw new OrderError('Mobile number required for delivery');
-  }
+const AUTO_COUPON = {
+  code: 'GOKULESH10',
+  minSubtotal: 999,
+  percentOff: 10,
+};
 
-  let totalAmount = 0;
+function calculateTotals(subtotalAmount) {
+  const isEligible = subtotalAmount >= AUTO_COUPON.minSubtotal;
+  const couponCode = isEligible ? AUTO_COUPON.code : null;
+  const discountAmount = isEligible ? Math.round((subtotalAmount * AUTO_COUPON.percentOff) / 100) : 0;
+  const shippingAmount = subtotalAmount >= 499 ? 0 : 60;
+  const totalAmount = Math.max(0, subtotalAmount - discountAmount) + shippingAmount;
+
+  return { subtotalAmount, discountAmount, couponCode, shippingAmount, totalAmount };
+}
+
+async function buildOrderItemsAndSubtotal(items) {
+  let subtotalAmount = 0;
   const orderItems = [];
 
   for (const item of items) {
@@ -43,8 +45,37 @@ async function createOrderForUser({
       price: product.price,
       quantity: item.quantity
     });
-    totalAmount += product.price * item.quantity;
+    subtotalAmount += product.price * item.quantity;
   }
+
+  return { orderItems, subtotalAmount };
+}
+
+async function quoteOrderForUser({ items }) {
+  if (!items?.length) {
+    throw new OrderError('No items in order');
+  }
+  const { subtotalAmount } = await buildOrderItemsAndSubtotal(items);
+  return calculateTotals(subtotalAmount);
+}
+
+async function createOrderForUser({
+  userId,
+  items,
+  shippingAddress,
+  notes,
+  paymentMethod = 'COD',
+  paymentDetails
+}) {
+  if (!items?.length) {
+    throw new OrderError('No items in order');
+  }
+  if (!shippingAddress?.mobile) {
+    throw new OrderError('Mobile number required for delivery');
+  }
+
+  const { orderItems, subtotalAmount } = await buildOrderItemsAndSubtotal(items);
+  const totals = calculateTotals(subtotalAmount);
 
   for (const item of items) {
     await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.quantity } });
@@ -54,7 +85,11 @@ async function createOrderForUser({
     user: userId,
     items: orderItems,
     shippingAddress,
-    totalAmount,
+    subtotalAmount: totals.subtotalAmount,
+    shippingAmount: totals.shippingAmount,
+    discountAmount: totals.discountAmount,
+    couponCode: totals.couponCode,
+    totalAmount: totals.totalAmount,
     notes,
     paymentMethod,
     paymentDetails
@@ -65,6 +100,7 @@ async function createOrderForUser({
 
 module.exports = {
   OrderError,
-  createOrderForUser
+  createOrderForUser,
+  quoteOrderForUser
 };
 
