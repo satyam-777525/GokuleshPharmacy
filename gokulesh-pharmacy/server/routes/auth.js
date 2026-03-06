@@ -5,7 +5,8 @@ const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const { protect } = require('../middleware/auth');
 
-const signToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE || '7d' });
+const JWT_SECRET = process.env.JWT_SECRET || 'dev_jwt_secret_change_me';
+const signToken = (id) => jwt.sign({ id }, JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE || '7d' });
 
 // @POST /api/auth/register
 router.post('/register', [

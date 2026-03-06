@@ -56,15 +56,15 @@ export default function Footer() {
             <h4>Contact Us</h4>
             <div className="contact-item">
               <FaPhone />
-              <span>+91 98765 43210</span>
+              <span>+91 93193 76279</span>
             </div>
             <div className="contact-item">
               <FaEnvelope />
-              <span>info@gokuleshpharmacy.com</span>
+              <span>gokuleshpharmacy1954@gmail.com</span>
             </div>
             <div className="contact-item">
               <FaMapMarkerAlt />
-              <span>123, Ayurved Marg, Ahmedabad, Gujarat – 380001</span>
+              <span>121/13 Kishan Ganga lal Darwaja, Infront Of Saraswati Shishu Mandir School, Mathura-281001</span>
             </div>
           </div>
         </div>
@@ -72,7 +72,7 @@ export default function Footer() {
       <div className="footer-bottom">
         <div className="container footer-bottom-inner">
           <span>© 2024 Gokulesh Pharmacy. All Rights Reserved.</span>
-          <span>Made with 🌿 for your wellness</span>
+          <span>Made by Satyam Varshney</span>
         </div>
       </div>
     </footer>

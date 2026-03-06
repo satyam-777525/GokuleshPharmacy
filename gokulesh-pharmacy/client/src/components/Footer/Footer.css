@@ -20,3 +20,19 @@
 .footer-bottom-inner { display: flex; justify-content: space-between; font-size: 12px; opacity: 0.55; }
 @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } .footer-brand { grid-column: 1 / -1; } }
 @media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } .footer-bottom-inner { flex-direction: column; gap: 6px; text-align: center; } }
+.contact-item{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contact-item{
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.contact-item svg{
+  margin-top: 3px;
+  flex-shrink: 0;
+}

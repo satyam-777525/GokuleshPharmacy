@@ -46,7 +46,7 @@ export default function Header() {
     <header className="header">
       <div className="header-top">
         <div className="container header-top-inner">
-          <span><FaPhoneAlt /> +91 8171171250 &nbsp;|&nbsp; Free delivery above ₹499</span>
+          <span><FaPhoneAlt /> +91 9319376279 &nbsp;|&nbsp; Free delivery above ₹499</span>
           <span>🌿 100% Natural · No Preservatives · Trusted Since 1985</span>
         </div>
       </div>
@@ -103,7 +103,11 @@ export default function Header() {
                 )}
               </div>
             ) : (
-              <Link to="/login" className="btn btn-primary btn-sm">Login / Register</Link>
+              <Link to="/login" className="btn btn-primary btn-sm auth-cta">
+                <FaUser />
+                <span className="auth-cta-full">Login / Register</span>
+                <span className="auth-cta-short">Login</span>
+              </Link>
             )}
 
             <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>

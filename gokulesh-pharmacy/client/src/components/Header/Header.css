@@ -101,4 +101,39 @@
   .mobile-search input::placeholder { color: rgba(255,255,255,0.5); }
   .mobile-search button { padding: 10px 16px; background: var(--primary); color: white; border: none; cursor: pointer; }
   .header-top-inner span:last-child { display: none; }
+
+  /* Compact auth button on mobile */
+  .auth-cta-full { display: none; }
+  .auth-cta-short { display: inline; }
 }
+
+@media (max-width: 560px) {
+  .header-top { font-size: 11px; }
+  .header-top-inner { justify-content: center; text-align: center; }
+  .header-top-inner span { justify-content: center; }
+
+  .header-inner { gap: 12px; }
+  .logo-name { font-size: 18px; }
+  .logo-sub { letter-spacing: 1.6px; }
+
+  .user-btn { padding: 8px 10px; }
+  .cart-btn { width: 40px; height: 40px; }
+}
+
+@media (max-width: 420px) {
+  .header-main { padding: 10px 0; }
+
+  .logo { gap: 10px; }
+  .logo-icon { width: 40px; height: 40px; font-size: 18px; border-radius: 12px; }
+  .logo-name { font-size: 16px; }
+  .logo-sub { font-size: 9px; }
+
+  .header-actions { gap: 8px; }
+  .btn.btn-sm { padding: 8px 10px; font-size: 12px; border-radius: 10px; }
+
+  /* Make sure actions don't overflow on tiny screens */
+  .header-inner { flex-wrap: wrap; justify-content: space-between; }
+}
+
+/* Default (desktop): show full label */
+.auth-cta-short { display: none; }

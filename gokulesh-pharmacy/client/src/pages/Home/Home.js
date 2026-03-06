@@ -5,6 +5,8 @@ import ProductCard from '../../components/ProductCard/ProductCard';
 import { getProducts, getCategories } from '../../utils/api';
 import './Home.css';
 
+
+
 const CATEGORY_EMOJIS = { churan: '🌿', goli: '💊', mukhwas: '🌺', achar: '🫙', masala: '🌶️', default: '🌱' };
 const HERO_IMGS = [
   'https://i.pinimg.com/1200x/ce/f1/c0/cef1c096b226c4f82fe0964d1d712469.jpg',
@@ -26,16 +28,26 @@ export default function Home() {
   useEffect(() => {
     getProducts({ featured: true, limit: 8 }).then(r => setFeatured(r.data.products));
     getCategories().then(r => {
-      setCategories(r.data);
-      r.data.slice(0, 4).forEach(cat => {
+      const cats = Array.isArray(r.data)
+        ? r.data
+        : Array.isArray(r.data?.categories)
+          ? r.data.categories
+          : [];
+
+      setCategories(cats);
+
+      cats.slice(0, 4).forEach(cat => {
         getProducts({ category: cat._id, limit: 4 }).then(p =>
-          setCatProducts(prev => ({ ...prev, [cat._id]: p.data.products }))
+          setCatProducts(prev => ({ ...prev, [cat._id]: p.data.products || [] }))
         );
       });
     });
   }, []);
 
   const DEMO_CATS = ['Churan', 'Goli & Tablets', 'Mukhwas', 'Achar & Pickles', 'Masala & Spices', 'Herbal Mix'];
+
+  const safeFeatured = Array.isArray(featured) ? featured : [];
+  const safeCategories = Array.isArray(categories) ? categories : [];
 
   return (
     <div className="home">
@@ -96,7 +108,10 @@ export default function Home() {
             </div>
           </div>
           <div className="cat-grid">
-            {(categories.length > 0 ? categories : DEMO_CATS.map((n, i) => ({ _id: i, name: n, slug: n.toLowerCase() }))).map(cat => (
+            {((Array.isArray(categories) && categories.length > 0)
+              ? categories
+              : DEMO_CATS.map((n, i) => ({ _id: i, name: n, slug: n.toLowerCase() })))
+              .map(cat => (
               <Link to={`/products?category=${cat._id}`} key={cat._id} className="cat-card">
                 <div className="cat-img">
                   <span className="cat-emoji">{CATEGORY_EMOJIS[cat.slug] || CATEGORY_EMOJIS.default}</span>
@@ -166,7 +181,7 @@ export default function Home() {
       </section>
 
       {/* Featured Products */}
-      {featured.length > 0 && (
+      {safeFeatured.length > 0 && (
         <section className="home-section alt-bg">
           <div className="container">
             <div className="section-head-row">
@@ -177,7 +192,7 @@ export default function Home() {
               <Link to="/products?featured=true" className="view-all-link">View all →</Link>
             </div>
             <div className="grid-4">
-              {featured.map(p => <ProductCard key={p._id} product={p} />)}
+              {safeFeatured.map(p => <ProductCard key={p._id} product={p} />)}
             </div>
           </div>
         </section>
@@ -198,8 +213,10 @@ export default function Home() {
       </div>
 
       {/* Category-wise Sections */}
-      {categories.slice(0, 4).map((cat, idx) =>
-        catProducts[cat._id]?.length > 0 ? (
+      {safeCategories.slice(0, 4).map((cat, idx) => {
+        const products = Array.isArray(catProducts[cat._id]) ? catProducts[cat._id] : [];
+
+        return products.length > 0 ? (
           <section key={cat._id} className={`home-section ${idx % 2 === 0 ? '' : 'alt-bg'}`}>
             <div className="container">
               <div className="section-head-row">
@@ -210,12 +227,12 @@ export default function Home() {
                 <Link to={`/products?category=${cat._id}`} className="view-all-link">View all →</Link>
               </div>
               <div className="grid-4">
-                {catProducts[cat._id].map(p => <ProductCard key={p._id} product={p} />)}
+                {products.map(p => <ProductCard key={p._id} product={p} />)}
               </div>
             </div>
           </section>
-        ) : null
-      )}
+        ) : null;
+      })}
 
       {/* Testimonials */}
       <section className="testimonials-section">
