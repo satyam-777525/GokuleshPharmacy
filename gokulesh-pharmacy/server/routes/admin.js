@@ -5,7 +5,7 @@ const Category = require('../models/Category');
 const Order = require('../models/Order');
 const User = require('../models/User');
 const { protect, adminOnly } = require('../middleware/auth');
-const { upload } = require('../config/cloudinary.js');
+const { upload, useCloudinary } = require('../config/cloudinary.js');
 
 
 router.use(protect, adminOnly);
@@ -128,9 +128,12 @@ router.get('/users', async (req, res) => {
   }
 });
 
-// Upload route for product images (stored locally)
+// Upload route for product images (Cloudinary when configured, else local disk)
 router.post('/upload', upload.array('images', 5), async (req, res) => {
-  const urls = req.files.map(f => `/uploads/products/${f.filename}`);
+  const urls = req.files.map((f) => {
+    if (useCloudinary && f.path) return f.path;
+    return `/uploads/products/${f.filename}`;
+  });
   res.json({ urls });
 });
 
