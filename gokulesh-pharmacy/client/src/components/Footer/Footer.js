@@ -70,11 +70,14 @@ export default function Footer() {
         </div>
       </div>
       <div className="footer-bottom">
-        <div className="container footer-bottom-inner">
-          <span>© 2024 Gokulesh Pharmacy. All Rights Reserved.</span>
-          <span>Made by Satyam Varshney</span>
-        </div>
-      </div>
+  <div className="container footer-bottom-inner">
+    <span>© 2024 Gokulesh Pharmacy. All Rights Reserved.</span>
+    <span>
+      Website Designed & Developed by <b>Satyam Varshney</b> |  
+      <a href="https://www.linkedin.com/in/satyam-varshney-5255a92b1/">Contact Developer</a>
+    </span>
+  </div>
+</div>
     </footer>
   );
 }
