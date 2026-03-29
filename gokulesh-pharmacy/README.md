@@ -1,317 +1,360 @@
-# 🌿 Gokulesh Pharmacy — Full MERN Stack E-Commerce
+# Gokulesh Pharmacy — MERN E-Commerce
 
-A complete, production-ready Ayurvedic products e-commerce website for **Gokulesh Pharmacy**, featuring churan, goli, mukhwas, and more — with **PhonePe** online payment and local product image uploads.
-
----
-
-## 📁 Project Structure
-
-```
-gokulesh-pharmacy/
-├── server/                   # Node.js + Express Backend
-│   ├── models/               # MongoDB Mongoose models
-│   │   ├── User.js
-│   │   ├── Product.js
-│   │   ├── Category.js
-│   │   └── Order.js
-│   ├── routes/
-│   │   ├── auth.js           # Login/Register
-│   │   ├── users.js          # Profile management
-│   │   ├── products.js       # Public product APIs
-│   │   ├── categories.js     # Category APIs
-│   │   ├── orders.js         # Order APIs (COD + payment method)
-│   │   ├── admin.js          # Admin + image upload
-│   │   └── payments.js       # PhonePe order + confirm
-│   ├── services/
-│   │   └── orderService.js   # Shared order creation logic
-│   ├── middleware/
-│   │   └── auth.js           # JWT + Role middleware
-│   ├── config/
-│   │   ├── cloudinary.js     # Local multer upload (uploads/products/)
-│   │   └── phonepeClient.js  # PhonePe SDK client
-│   ├── uploads/products/     # Product images (local)
-│   ├── .env                  # Your secrets (see below)
-│   ├── .env.example          # Template — copy to .env
-│   ├── index.js
-│   └── package.json
-│
-└── client/
-    ├── public/index.html
-    └── src/
-        ├── components/       # Header, Footer, ProductCard
-        ├── context/          # AuthContext, CartContext
-        ├── pages/
-        │   ├── Checkout/     # CheckoutPage, PhonePeResultPage
-        │   └── ...
-        ├── utils/api.js
-        ├── App.js
-        └── App.css
-```
+Full-stack e-commerce for **Gokulesh Pharmacy**: Ayurvedic products (churan, goli, mukhwas, achar, masala, and more). Includes **JWT authentication**, **persistent cart**, **Cash on Delivery** and **PhonePe** online payments, **admin panel** with catalog and order management, and **local or Cloudinary** product images.
 
 ---
 
-## 🚀 Setup & Run (Local)
+## Table of contents
 
-### 1. Prerequisites
-
-- **Node.js** 18+
-- **MongoDB** (local or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas))
-- **PhonePe PG** merchant account (for online payments): [PhonePe Business](https://business.phonepe.com/pg/register)
-
----
-
-### 2. Backend
-
-```bash
-cd server
-npm install
-npm i https://phonepe.mycloudrepo.io/public/repositories/phonepe-pg-sdk-node/releases/v2/phonepe-pg-sdk-node.tgz
-```
-
-Create **`server/.env`** (see **“How to add .env”** below), then:
-
-```bash
-npm run dev
-```
-
-Server runs at **http://localhost:5000**. Health check: `GET http://localhost:5000/`.
+1. [Features](#features)
+2. [Pricing & discounts (business rules)](#pricing--discounts-business-rules)
+3. [Tech stack](#tech-stack)
+4. [Project structure](#project-structure)
+5. [Prerequisites](#prerequisites)
+6. [Quick start](#quick-start)
+7. [Environment variables](#environment-variables)
+8. [PhonePe payment gateway](#phonepe-payment-gateway)
+9. [Admin access](#admin-access)
+10. [Product images](#product-images)
+11. [API reference](#api-reference)
+12. [Production deployment](#production-deployment)
+13. [Frontend production API URL](#frontend-production-api-url)
+14. [Troubleshooting](#troubleshooting)
+15. [Design notes](#design-notes)
+16. [License](#license)
 
 ---
 
-### 3. Frontend
+## Features
 
-```bash
-cd client
-npm install
-npm start
-```
+### Storefront
 
-App runs at **http://localhost:3000** (proxies API to port 5000).
-
----
-
-### 4. Admin user
-
-1. Register a user in the app (e.g. `admin@yourdomain.com`).
-2. In MongoDB (Compass or shell):
-
-```js
-db.users.updateOne(
-  { email: "admin@yourdomain.com" },
-  { $set: { role: "admin" } }
-)
-```
-
-3. Log in and open **/admin**.
-
----
-
-### 5. Test
-
-| Flow | What to do |
-|------|------------|
-| **COD** | Checkout → Cash on Delivery → place order → **My Orders**. |
-| **PhonePe** | Checkout → Online Payment → pay on PhonePe → return to `/payment/phonepe/result` → **My Orders**. |
-| **Admin image** | Admin → Products → Add/Edit → **Upload Images** (files go to `server/uploads/products/`). |
-
----
-
-## 🔐 How to add details in `.env`
-
-### Step 1: Create the file
-
-- In the **`server`** folder, create a file named **`.env`** (no space, no `.txt`).
-- You can copy from the template:  
-  `cp .env.example .env`  
-  then edit `.env`.
-
-### Step 2: Fill each variable
-
-| Variable | Where to get it | Example (local) |
-|----------|------------------|------------------|
-| **PORT** | Optional; server port | `5000` |
-| **MONGO_URI** | Your MongoDB connection string | `mongodb://localhost:27017/gokulesh-pharmacy` or Atlas URI |
-| **JWT_SECRET** | Any long random string (32+ chars) | `mySuperSecretJwtKey2024ChangeInProd` |
-| **JWT_EXPIRE** | How long login lasts | `7d` |
-| **CLIENT_URL** | URL of your frontend | `http://localhost:3000` |
-| **PHONEPE_CLIENT_ID** | PhonePe Business → Developer → API credentials | From dashboard |
-| **PHONEPE_CLIENT_SECRET** | Same place as Client ID | From dashboard |
-| **PHONEPE_CLIENT_VERSION** | Usually `1.0.0` | `1.0.0` |
-| **PHONEPE_ENV** | `SANDBOX` = test, `PROD` = live | `SANDBOX` |
-
-### Step 3: Example `server/.env` (local)
-
-```env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/gokulesh-pharmacy
-JWT_SECRET=mySuperSecretJwtKey2024ChangeInProd
-JWT_EXPIRE=7d
-CLIENT_URL=http://localhost:3000
-
-PHONEPE_CLIENT_ID=PG_SANDBOX_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-PHONEPE_CLIENT_SECRET=your_secret_from_phonepe_dashboard
-PHONEPE_CLIENT_VERSION=1.0.0
-PHONEPE_ENV=SANDBOX
-```
-
-- **Do not** put quotes around values.
-- **Do not** commit `.env` to git (it should be in `.gitignore`).
-- PhonePe: sign up at [PhonePe Business](https://business.phonepe.com/pg/register), then in the dashboard get **Client ID** and **Client Secret** (Sandbox for testing, Production for live).
-
-### Step 4: PhonePe redirect URL
-
-- In PhonePe merchant dashboard, set **Redirect URL** to where users land after payment:
-  - Local: `http://localhost:3000/payment/phonepe/result`
-  - Production: `https://yourdomain.com/payment/phonepe/result`
-
----
-
-## 🌍 Production deployment
-
-### 1. `.env` for production
-
-Use a **separate** `.env` on the production server (or use your host’s env config). Set:
-
-| Variable | Production value |
-|----------|-------------------|
-| **MONGO_URI** | Production MongoDB URI (e.g. Atlas cluster, strong password) |
-| **JWT_SECRET** | New, long random secret (different from dev) |
-| **CLIENT_URL** | Your live frontend URL, e.g. `https://www.gokuleshpharmacy.com` |
-| **PHONEPE_CLIENT_ID** | **Production** credentials from PhonePe (not Sandbox) |
-| **PHONEPE_CLIENT_SECRET** | **Production** secret from PhonePe |
-| **PHONEPE_ENV** | `PROD` |
-| **PORT** | Whatever your host uses (e.g. `5000` or `process.env.PORT`) |
-
-Example:
-
-```env
-PORT=5000
-MONGO_URI=mongodb+srv://user:password@cluster.mongodb.net/gokulesh-pharmacy?retryWrites=true&w=majority
-JWT_SECRET=another-very-long-random-string-for-production-only
-JWT_EXPIRE=7d
-CLIENT_URL=https://www.gokuleshpharmacy.com
-
-PHONEPE_CLIENT_ID=PG_PROD_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-PHONEPE_CLIENT_SECRET=your_production_secret
-PHONEPE_CLIENT_VERSION=1.0.0
-PHONEPE_ENV=PROD
-```
-
-### 2. PhonePe in production
-
-- In PhonePe dashboard, switch to **Production** and get Production **Client ID** and **Client Secret**.
-- Set Production **Redirect URL** to:  
-  `https://yourdomain.com/payment/phonepe/result`
-
-### 3. Build and serve frontend
-
-```bash
-cd client
-npm run build
-```
-
-- Upload the **`build`** folder to your static host (Vercel, Netlify, S3, etc.), **or**
-- Serve it from the same server as the API (e.g. `app.use(express.static(path.join(__dirname, '../client/build'))` and point your server to the React build).
-
-Ensure the frontend is served over **HTTPS** and the domain matches **CLIENT_URL**.
-
-### 4. Backend in production
-
-- Run the Node server with the production `.env` (e.g. `node index.js` or `npm start`).
-- Use a process manager (PM2, systemd) and reverse proxy (Nginx) with HTTPS.
-- Keep **CORS**: the server already uses `CLIENT_URL`; ensure it matches your live frontend URL.
-
-### 5. Uploads and database
-
-- **uploads/products/** is created automatically; on some hosts you may need a persistent volume so images survive restarts.
-- Back up MongoDB regularly (e.g. Atlas backups).
-
-### 6. Checklist before go-live
-
-- [ ] `PHONEPE_ENV=PROD` and production PhonePe credentials
-- [ ] `CLIENT_URL` = exact production frontend URL (with `https://`)
-- [ ] Strong `JWT_SECRET` (only in production env)
-- [ ] Production MongoDB URI and backups
-- [ ] Redirect URL in PhonePe set to `https://yourdomain.com/payment/phonepe/result`
-- [ ] Frontend built and served over HTTPS
-- [ ] Admin user created and tested
-
----
-
-## 🌐 Key Features
-
-### Customer-facing
-
-- Responsive, mobile-first design (warm theme)
-- Browse products by category, search, filter by price
-- Product detail with image gallery, benefits, ingredients
-- Cart (persistent via localStorage)
-- **Checkout**: **Cash on Delivery (COD)** or **Online Payment (PhonePe)** — UPI, cards, net banking
-- Register / login (email or mobile)
-- Profile and address management
-- Order history
+- Responsive, mobile-first UI (warm Ayurvedic-inspired theme)
+- Home, category sections, featured products
+- Product listing: category, search, price filters, pagination
+- Product detail: gallery, description, add to cart
+- **Shopping cart** persisted in `localStorage`
+- **Checkout**: delivery address, order notes
+- **Payments**: **COD** or **PhonePe** (redirect to hosted checkout)
+- Register / login (email or mobile), profile and saved address
+- **My Orders** with totals and **payment method** summary
+- Policy pages: privacy, terms, refund, shipping, PhonePe disclosure
 
 ### Admin panel (`/admin`)
 
-- Dashboard: products, orders, revenue, customers
-- Products: create, edit, delete; **upload product images** (saved in `server/uploads/products/`)
-- Categories: CRUD
-- Orders: list and update status
-- Users: view customer list
+- **Dashboard**: counts, revenue aggregate, recent orders
+- **Products**: CRUD, optional **multi-image upload**
+- **Categories**: CRUD
+- **Orders**: search, status updates, expandable details (items, address, notes)
+- **Payment method** visible in the orders table and in expanded order details (COD, PhonePe; PhonePe instrument when returned by the gateway)
+- **Users**: list customers
+
+### Backend
+
+- REST API under `/api`
+- Order totals calculated on the server (`orderService.js`) from live product prices and stock
+- **Payment method** stored on each order for admin and customer views
 
 ---
 
-## 🖼 Product images (local upload)
+## Pricing & discounts (business rules)
 
-- Admin adds product images via **file upload** in the product form (no external image URLs required).
-- Images are stored under **`server/uploads/products/`** and served at `/uploads/products/<filename>`.
-- Allowed: image files only, max 5MB per file.  
-- Optional: you can still paste image URLs in the “Image URLs” field for existing or external images.
+These rules are implemented in **`server/services/orderService.js`** and mirrored for the UI in **`client/src/constants/orderPricing.js`**. The server is the source of truth when an order is placed.
 
----
+| Rule | Detail |
+|------|--------|
+| **Delivery** | If order **subtotal &lt; ₹999**, delivery fee is **₹100**. If subtotal **≥ ₹999**, delivery is **free**. |
+| **Auto discount** | Coupon code **GOKULESH10**: **10%** off subtotal when subtotal **≥ ₹1999**. Applied automatically (no manual code entry). Rounding: discount is rounded to the nearest rupee on the server. |
+| **Total** | `(subtotal − discount) + delivery` (never negative subtotal after discount). |
 
-## 🏗 API endpoints (summary)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register |
-| POST | `/api/auth/login` | Login |
-| GET | `/api/auth/me` | Current user |
-| GET | `/api/products` | List products (filters) |
-| GET | `/api/products/:slug` | Single product |
-| GET | `/api/categories` | All categories |
-| POST | `/api/orders` | Place order (COD or after payment) |
-| GET | `/api/orders/my-orders` | User's orders |
-| POST | `/api/payments/phonepe/order` | Create PhonePe order, get checkout URL |
-| POST | `/api/payments/phonepe/confirm` | Confirm payment and create order |
-| GET/POST/PUT/DELETE | `/api/admin/*` | Admin (products, categories, orders, users, upload) |
+COD and PhonePe flows both use the same calculation when the order is created.
 
 ---
 
-## 🎨 Design system
-
-- **Primary**: `#c8611a` (warm spice)
-- **Accent**: `#e8a020` (gold)
-- **Fonts**: Playfair Display (headings), DM Sans (body)
-- Mobile-first; breakpoints at 560px, 900px
-
----
-
-## 📦 Tech stack
+## Tech stack
 
 | Layer | Technology |
-|-------|------------|
-| Frontend | React 18, React Router 6, Context API |
-| Styling | Custom CSS variables |
-| Backend | Node.js, Express |
-| Database | MongoDB, Mongoose |
-| Auth | JWT (jsonwebtoken) |
-| Payments | PhonePe PG (pg-sdk-node) |
-| Image upload | Multer, local disk (`uploads/products/`) |
-| Notifications | react-hot-toast |
+|--------|------------|
+| Frontend | React 18, React Router 6, Context API (auth, cart), Axios, react-hot-toast |
+| Styling | Custom CSS, variables |
+| Backend | Node.js, Express 4 |
+| Database | MongoDB, Mongoose 8 |
+| Auth | JWT (`jsonwebtoken`), bcrypt |
+| Payments | PhonePe Payment Gateway (`pg-sdk-node` v2) |
+| Uploads | Multer; optional Cloudinary |
+| Validation | express-validator (auth) |
 
 ---
 
-## 📝 License
+## Project structure
 
-MIT — Free to use for commercial projects.
+```
+gokulesh-pharmacy/
+├── package.json              # Root: concurrently dev both apps (optional)
+├── README.md
+│
+├── server/
+│   ├── index.js             # Express app, CORS, routes, Mongo connect
+│   ├── package.json
+│   ├── .env                 # Secrets (not in git)
+│   ├── .env.example         # Template
+│   ├── models/              # User, Product, Category, Order
+│   ├── routes/
+│   │   ├── auth.js
+│   │   ├── users.js
+│   │   ├── products.js
+│   │   ├── categories.js
+│   │   ├── orders.js
+│   │   ├── admin.js
+│   │   └── payments.js      # PhonePe: /phonepe/order, /phonepe/confirm
+│   ├── services/
+│   │   └── orderService.js   # Totals, stock decrement, create order
+│   ├── middleware/
+│   │   └── auth.js           # JWT protect, adminOnly
+│   ├── config/
+│   │   ├── cloudinary.js     # Optional Cloudinary + local disk fallback
+│   │   └── phonepeClient.js # PhonePe StandardCheckout client
+│   └── uploads/products/    # Local image storage (default)
+│
+└── client/
+    ├── package.json
+    ├── public/
+    └── src/
+        ├── App.js
+        ├── constants/
+        │   └── orderPricing.js   # Delivery + auto-coupon (sync with server)
+        ├── context/
+        │   ├── AuthContext.js
+        │   └── CartContext.js
+        ├── components/
+        ├── pages/
+        │   ├── Admin/
+        │   ├── Auth/
+        │   ├── Cart/, Checkout/, Home/, Product/, Profile/, Policies/
+        │   └── ...
+        └── utils/
+            ├── api.js
+            └── paymentLabels.js  # Human-readable payment labels in UI
+```
+
+---
+
+## Prerequisites
+
+- **Node.js** 18 or newer
+- **MongoDB** running locally or **MongoDB Atlas**
+- **PhonePe Business** merchant account for online payments ([PhonePe Business](https://business.phonepe.com/pg/register)) — optional if you only use COD in dev
+
+---
+
+## Quick start
+
+From the **`gokulesh-pharmacy`** folder (monorepo root):
+
+```bash
+# Install server + client dependencies
+npm run install-all
+
+# Terminal 1 — backend (after configuring server/.env)
+cd server
+npm i https://phonepe.mycloudrepo.io/public/repositories/phonepe-pg-sdk-node/releases/v2/phonepe-pg-sdk-node.tgz
+npm run dev
+
+# Terminal 2 — frontend
+cd client
+npm start
+```
+
+Or use **`npm run dev`** from the root if you have installed root `concurrently` (`npm install` at root): it runs server and client together (ensure PhonePe tarball is installed under `server` first).
+
+| URL | Purpose |
+|-----|---------|
+| http://localhost:3000 | React app (dev server proxies `/api` to port 5000) |
+| http://localhost:5000 | API — `GET /` returns `{ "message": "Gokulesh Pharmacy API Running" }` |
+
+---
+
+## Environment variables
+
+Create **`server/.env`** by copying **`server/.env.example`**.
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `PORT` | No | API port (default `5000`) |
+| `MONGO_URI` | Yes | MongoDB connection string |
+| `JWT_SECRET` | Yes | Long random string for signing tokens |
+| `JWT_EXPIRE` | No | Token lifetime (e.g. `7d`) |
+| `CLIENT_URL` | Yes* | Frontend origin; used for CORS allowlist and PhonePe **redirect URL** build |
+| `PHONEPE_CLIENT_ID` | For online pay | From PhonePe dashboard |
+| `PHONEPE_CLIENT_SECRET` | For online pay | From PhonePe dashboard |
+| `PHONEPE_CLIENT_VERSION` | No | Default `1.0.0` |
+| `PHONEPE_ENV` | For online pay | `SANDBOX` or `PROD` — must match credential type |
+| `CLOUDINARY_*` | No | Optional; enables cloud image URLs (see [Product images](#product-images)) |
+
+\* In development, `http://localhost:3000` is typical. Do not wrap values in quotes unless your host requires it.
+
+---
+
+## PhonePe payment gateway
+
+1. Obtain **Client ID** and **Client Secret** from PhonePe Business → Developer / API credentials.
+2. Set **`PHONEPE_ENV=SANDBOX`** with sandbox keys, or **`PROD`** with production keys only.
+3. In the PhonePe dashboard, register **redirect URL** exactly as users return:
+   - Local: `http://localhost:3000/payment/phonepe/result`
+   - Production: `https://yourdomain.com/payment/phonepe/result`
+4. Ensure **`CLIENT_URL`** matches the site origin used in that redirect.
+
+**Flow:** Authenticated user → `POST /api/payments/phonepe/order` (body includes `items`; amount is **quoted server-side**) → redirect to PhonePe → user pays → return to **`/payment/phonepe/result`** → `POST /api/payments/phonepe/confirm` creates the order with **`paymentMethod: 'PhonePe'`** and payment metadata when completed.
+
+If **`PHONEPE_CLIENT_ID` / `SECRET`** are missing, the API responds that the gateway is not configured. Invalid credentials often surface as **401 / Unauthorized** in server logs when the SDK requests a token.
+
+---
+
+## Admin access
+
+1. Register a normal user through the app.
+2. In MongoDB, set that user’s `role` to `"admin"`:
+
+   ```js
+   db.users.updateOne(
+     { email: "you@example.com" },
+     { $set: { role: "admin" } }
+   );
+   ```
+
+3. Log in and open **`/admin`**.
+
+All `/api/admin/*` routes require a valid JWT **and** `role === 'admin'`.
+
+---
+
+## Product images
+
+- **Default:** Admin upload stores files under **`server/uploads/products/`**, served at **`/uploads/products/<filename>`**.
+- **Optional Cloudinary:** Set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` in `server/.env`. When configured, uploads can use Cloudinary URLs (see `server/config/cloudinary.js`).
+
+---
+
+## API reference
+
+Base path: **`/api`**. Protected routes expect header: **`Authorization: Bearer <token>`**.
+
+### Auth (`/api/auth`)
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/register` | No | Register |
+| POST | `/login` | No | Login |
+| GET | `/me` | Yes | Current user |
+
+### Users (`/api/users`)
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/profile` | Yes | Get profile |
+| PUT | `/profile` | Yes | Update profile / address |
+| PUT | `/change-password` | Yes | Change password |
+
+### Catalog (public)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/products` | List products (query: `category`, `search`, `featured`, `minPrice`, `maxPrice`, `page`, `limit`) |
+| GET | `/products/:slug` | Product by slug |
+| GET | `/categories` | All categories |
+
+### Orders (customer)
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/orders` | Yes | Place order. Body: `items`, `shippingAddress`, `notes`, optional `paymentMethod`, optional `paymentDetails`. Totals computed server-side. |
+| GET | `/orders/my-orders` | Yes | List current user’s orders |
+| GET | `/orders/:id` | Yes | Single order (owner only) |
+
+### Payments
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/payments/phonepe/order` | Yes | Returns `checkoutUrl`, `merchantOrderId`, `amount` |
+| POST | `/payments/phonepe/confirm` | Yes | Verifies payment state; creates order |
+
+### Admin (`/api/admin`)
+
+All routes: **JWT + admin role**.
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/dashboard` | Stats + recent orders |
+| GET/POST | `/products` | List / create |
+| PUT/DELETE | `/products/:id` | Update / soft-delete |
+| GET/POST | `/categories` | List / create |
+| PUT/DELETE | `/categories/:id` | Update / delete |
+| GET | `/orders` | All orders (includes `paymentMethod`, `paymentDetails`) |
+| PUT | `/orders/:id/status` | Update status |
+| GET | `/users` | Customers |
+| POST | `/upload` | Multipart image upload |
+
+---
+
+## Production deployment
+
+1. **MongoDB:** Use a managed cluster (Atlas) with strong credentials and network rules.
+2. **Server `.env`:** Production `MONGO_URI`, new **`JWT_SECRET`**, **`CLIENT_URL`** = public HTTPS frontend URL, **`PHONEPE_ENV=PROD`** and production PhonePe keys.
+3. **PhonePe:** Production redirect URL must match `https://yourdomain.com/payment/phonepe/result`.
+4. **Build frontend:** `cd client && npm run build`. Host the `build` folder on a static host **or** serve via Express **and** set **`REACT_APP_API_URL`** if the API is on another origin (see below).
+5. **HTTPS:** Required for real payments and modern browser APIs.
+6. **Process manager:** Use PM2, systemd, or your platform’s runner for `node index.js`.
+7. **Reverse proxy:** Nginx (or similar) for TLS termination and forwarding to Node.
+8. **Uploads:** Persist `uploads/` or rely on Cloudinary so images survive redeploys.
+
+### Pre-launch checklist
+
+- [ ] Production MongoDB + backups
+- [ ] Strong, unique `JWT_SECRET`
+- [ ] `CLIENT_URL` matches live site (scheme + host)
+- [ ] PhonePe production keys + redirect URL + `PHONEPE_ENV=PROD`
+- [ ] Admin user tested on production
+- [ ] CORS: server allows your production frontend origin
+
+---
+
+## Frontend production API URL
+
+In **`client`**, API base URL is chosen in **`src/utils/api.js`**:
+
+- **Development:** requests go to **`/api`** (Create React App proxy → port 5000).
+- **Production:** **`process.env.REACT_APP_API_URL`** if set (e.g. `https://api.yourdomain.com/api`), otherwise **`/api`** (same host as static files).
+
+When the API lives on another domain, build with:
+
+```bash
+REACT_APP_API_URL=https://api.yourdomain.com/api npm run build
+```
+
+---
+
+## Troubleshooting
+
+| Issue | What to check |
+|--------|----------------|
+| **PhonePe 401 / Unauthorized** in logs | Client ID and secret match **`PHONEPE_ENV`** (sandbox vs prod); keys not expired; dashboard access enabled. |
+| **CORS errors** | `CLIENT_URL` in `server/.env` includes your exact browser origin. |
+| **Online payment “not configured”** | `PHONEPE_CLIENT_ID` and `PHONEPE_CLIENT_SECRET` set in `server/.env`. |
+| **Order total mismatch** | Always compare with server response; cart UI uses the same rules as `orderPricing.js` / `orderService.js`. |
+| **MongoDB connect fail** | `MONGO_URI`, firewall / IP allowlist on Atlas, database user password. |
+
+---
+
+## Design notes
+
+- **Primary:** `#c8611a`
+- **Accent:** `#e8a020`
+- **Typography:** Playfair Display (headings), DM Sans (body)
+- Breakpoints around **560px** and **900px**
+
+---
+
+## License
+
+MIT — free to use and modify, including for commercial projects.
+
