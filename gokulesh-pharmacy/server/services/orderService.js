@@ -9,17 +9,22 @@ class OrderError extends Error {
   }
 }
 
+// Auto coupon & delivery — must match client/src/constants/orderPricing.js
 const AUTO_COUPON = {
   code: 'GOKULESH10',
-  minSubtotal: 999,
+  minSubtotal: 1999,
   percentOff: 10,
 };
+
+const FREE_DELIVERY_MIN_SUBTOTAL = 999;
+const DELIVERY_CHARGE_RUPEES = 100;
 
 function calculateTotals(subtotalAmount) {
   const isEligible = subtotalAmount >= AUTO_COUPON.minSubtotal;
   const couponCode = isEligible ? AUTO_COUPON.code : null;
   const discountAmount = isEligible ? Math.round((subtotalAmount * AUTO_COUPON.percentOff) / 100) : 0;
-  const shippingAmount = subtotalAmount >= 499 ? 0 : 60;
+  // Delivery: ₹100 if subtotal < ₹999, free at ₹999+
+  const shippingAmount = subtotalAmount >= FREE_DELIVERY_MIN_SUBTOTAL ? 0 : DELIVERY_CHARGE_RUPEES;
   const totalAmount = Math.max(0, subtotalAmount - discountAmount) + shippingAmount;
 
   return { subtotalAmount, discountAmount, couponCode, shippingAmount, totalAmount };

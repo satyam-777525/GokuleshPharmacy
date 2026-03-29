@@ -46,7 +46,7 @@ export default function Header() {
     <header className="header">
       <div className="header-top">
         <div className="container header-top-inner">
-          <span><FaPhoneAlt /> +91 9319376279 &nbsp;|&nbsp; Free delivery above ₹499</span>
+          <span><FaPhoneAlt /> +91 9319376279 &nbsp;|&nbsp; Free delivery on ₹999+ orders</span>
           <span>🌿 100% Natural · No Preservatives · Trusted Since 1985</span>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getMyOrders } from '../../utils/api';
+import { formatPaymentMethod } from '../../utils/paymentLabels';
 import './Profile.css';
 
 const STATUS_BADGE = { pending: 'badge-yellow', confirmed: 'badge-blue', processing: 'badge-blue', shipped: 'badge-blue', delivered: 'badge-green', cancelled: 'badge-red' };
@@ -44,7 +45,12 @@ export default function OrdersPage() {
                   {order.items.length > 4 && <span className="order-chip">+{order.items.length - 4} more</span>}
                 </div>
                 <div className="order-footer-row">
-                  <div className="order-addr-text">📍 {order.shippingAddress?.city}, {order.shippingAddress?.state} — {order.shippingAddress?.mobile}</div>
+                  <div className="order-addr-text">
+                    📍 {order.shippingAddress?.city}, {order.shippingAddress?.state} — {order.shippingAddress?.mobile}
+                    <span style={{ display: 'block', marginTop: 6, fontSize: 13, opacity: 0.85 }}>
+                      💳 {formatPaymentMethod(order.paymentMethod)}
+                    </span>
+                  </div>
                   <div className="order-total-text">₹{order.totalAmount}</div>
                 </div>
               </div>

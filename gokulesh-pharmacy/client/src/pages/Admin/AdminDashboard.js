@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaBoxOpen, FaClipboardList, FaUsers, FaRupeeSign } from 'react-icons/fa';
 import { adminDashboard } from '../../utils/api';
+import { formatPaymentMethod } from '../../utils/paymentLabels';
 
 const STATUS_COLORS = { pending: 'badge-yellow', confirmed: 'badge-blue', delivered: 'badge-green', cancelled: 'badge-red', shipped: 'badge-blue', processing: 'badge-blue' };
 
@@ -39,7 +40,7 @@ export default function AdminDashboard() {
         <div className="admin-table-wrap">
           <table className="admin-table">
             <thead>
-              <tr><th>Order ID</th><th>Customer</th><th>Mobile</th><th>Amount</th><th>Status</th></tr>
+              <tr><th>Order ID</th><th>Customer</th><th>Mobile</th><th>Payment</th><th>Amount</th><th>Status</th></tr>
             </thead>
             <tbody>
               {data.recentOrders.map(o => (
@@ -47,6 +48,7 @@ export default function AdminDashboard() {
                   <td>#{o._id.slice(-8).toUpperCase()}</td>
                   <td>{o.user?.name || 'Guest'}</td>
                   <td>{o.shippingAddress?.mobile || o.user?.mobile || '–'}</td>
+                  <td>{formatPaymentMethod(o.paymentMethod)}</td>
                   <td>₹{o.totalAmount}</td>
                   <td><span className={`badge ${STATUS_COLORS[o.status]}`}>{o.status}</span></td>
                 </tr>

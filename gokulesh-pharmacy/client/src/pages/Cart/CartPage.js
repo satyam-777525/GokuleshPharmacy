@@ -7,7 +7,19 @@ import './CartPage.css';
 const PLACEHOLDER = 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=200&q=80';
 
 export default function CartPage() {
-  const { items, subtotal, discount, discountedSubtotal, couponCode, removeItem, updateQty, clearCart } = useCart();
+  const {
+    items,
+    subtotal,
+    discount,
+    discountedSubtotal,
+    couponCode,
+    deliveryCharge,
+    untilFreeDelivery,
+    untilAutoDiscount,
+    removeItem,
+    updateQty,
+    clearCart
+  } = useCart();
 
   if (items.length === 0) {
     return (
@@ -24,8 +36,7 @@ export default function CartPage() {
     );
   }
 
-  const shipping = subtotal >= 499 ? 0 : 60;
-  const grandTotal = discountedSubtotal + shipping;
+  const grandTotal = discountedSubtotal + deliveryCharge;
 
   return (
     <div className="page">
@@ -72,16 +83,23 @@ export default function CartPage() {
             </div>
             {discount > 0 && (
               <div className="summary-line">
-                <span>Coupon {couponCode} Applied</span>
+                <span>{couponCode} — 10% off (orders ₹1999+)</span>
                 <span style={{ color: 'var(--success)', fontWeight: 700 }}>-₹{discount}</span>
+              </div>
+            )}
+            {discount === 0 && subtotal > 0 && untilAutoDiscount > 0 && (
+              <div className="free-ship-note" style={{ marginBottom: 8 }}>
+                🎁 Add ₹{untilAutoDiscount} more for automatic 10% off ({couponCode || 'GOKULESH10'})
               </div>
             )}
             <div className="summary-line">
               <span>Delivery</span>
-              <span className={shipping === 0 ? 'free-text' : ''}>{shipping === 0 ? '🎉 FREE' : `₹${shipping}`}</span>
+              <span className={deliveryCharge === 0 ? 'free-text' : ''}>
+                {deliveryCharge === 0 ? '🎉 FREE' : `₹${deliveryCharge}`}
+              </span>
             </div>
-            {shipping > 0 && (
-              <div className="free-ship-note">🚚 Add ₹{499 - subtotal} more for FREE delivery!</div>
+            {deliveryCharge > 0 && (
+              <div className="free-ship-note">🚚 Add ₹{untilFreeDelivery} more for FREE delivery (on ₹999+ orders)</div>
             )}
             <div className="summary-line total">
               <span>Total</span>

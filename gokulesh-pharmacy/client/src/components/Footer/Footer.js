@@ -73,7 +73,7 @@ export default function Footer() {
   <div className="container footer-bottom-inner">
     <span>© 2024 Gokulesh Pharmacy. All Rights Reserved.</span>
     <span>
-      Website Designed & Developed by <b>Satyam Varshney</b> |  
+      Website Designed by <b>Satyam Varshney</b> |  
       <a href="https://www.linkedin.com/in/satyam-varshney-5255a92b1/">Contact Developer</a>
     </span>
   </div>

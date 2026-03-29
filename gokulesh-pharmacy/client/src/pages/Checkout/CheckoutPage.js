@@ -7,7 +7,17 @@ import toast from 'react-hot-toast';
 import './CheckoutPage.css';
 
 export default function CheckoutPage() {
-  const { items, subtotal, discount, discountedSubtotal, couponCode, clearCart } = useCart();
+  const {
+    items,
+    subtotal,
+    discount,
+    discountedSubtotal,
+    couponCode,
+    deliveryCharge,
+    untilFreeDelivery,
+    untilAutoDiscount,
+    clearCart
+  } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -20,8 +30,7 @@ export default function CheckoutPage() {
     notes: ''
   });
 
-  const shipping = subtotal >= 499 ? 0 : 60;
-  const grandTotal = discountedSubtotal + shipping;
+  const grandTotal = discountedSubtotal + deliveryCharge;
   const ch = (k) => e => setForm(p => ({ ...p, [k]: e.target.value }));
 
   const validateAddress = () => {
@@ -171,17 +180,26 @@ export default function CheckoutPage() {
             <div className="co-item"><span>Subtotal</span><span>₹{subtotal}</span></div>
             {discount > 0 && (
               <div className="co-item">
-                <span>Coupon {couponCode}</span>
+                <span>{couponCode} — 10% auto discount (orders ₹1999+)</span>
                 <span style={{ color: 'var(--success)', fontWeight: 700 }}>-₹{discount}</span>
               </div>
             )}
+            {discount === 0 && subtotal > 0 && untilAutoDiscount > 0 && (
+              <p style={{ fontSize: 12, color: '#14532d', background: '#dcfce7', padding: '8px 12px', borderRadius: 8, margin: '6px 0' }}>
+                10% off ({couponCode || 'GOKULESH10'}) applies automatically on orders of ₹1999 or more — add ₹{untilAutoDiscount} more.
+              </p>
+            )}
             <div className="co-item">
               <span>Delivery</span>
-              <span style={shipping === 0 ? { color: 'var(--success)', fontWeight: 700 } : {}}>
-                {shipping === 0 ? '🎉 FREE' : `₹${shipping}`}
+              <span style={deliveryCharge === 0 ? { color: 'var(--success)', fontWeight: 700 } : {}}>
+                {deliveryCharge === 0 ? '🎉 FREE' : `₹${deliveryCharge}`}
               </span>
             </div>
-            {shipping > 0 && <p style={{ fontSize: 12, color: '#92400e', background: '#fef9c3', padding: '8px 12px', borderRadius: 8, margin: '6px 0' }}>Add ₹{499 - subtotal} more for FREE delivery!</p>}
+            {deliveryCharge > 0 && (
+              <p style={{ fontSize: 12, color: '#92400e', background: '#fef9c3', padding: '8px 12px', borderRadius: 8, margin: '6px 0' }}>
+                Add ₹{untilFreeDelivery} more for FREE delivery (orders ₹999+).
+              </p>
+            )}
             <div className="co-item co-total"><span>Total</span><span>₹{grandTotal}</span></div>
             <button
               type="submit"

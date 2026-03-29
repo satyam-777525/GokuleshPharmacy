@@ -64,7 +64,7 @@ export default function Home() {
             </div>
             <div className="hero-trust">
               <div className="trust-chip"><span>⭐</span> 10,000+ Happy Customers</div>
-              <div className="trust-chip"><span>🚚</span> Free Delivery ₹499+</div>
+              <div className="trust-chip"><span>🚚</span> Free Delivery ₹999+</div>
               <div className="trust-chip"><span>🌿</span> No Preservatives</div>
               <div className="trust-chip">
                 <span>💳</span>
@@ -91,7 +91,7 @@ export default function Home() {
       <div className="offer-bar">
         <div className="offer-bar-inner">
           {[...Array(2)].map((_, ri) =>
-            ['🌿 Free Delivery on Orders ₹499+', '🎁 Use Code GOKULESH10 for 10% Off', '⭐ 10,000+ Happy Customers', '🫙 Fresh Homestyle Achar', '🌶️ Pure Spice Masalas', '🌺 Fragrant Mukhwas Collections'].map((t, i) => (
+            ['🌿 Free Delivery on Orders ₹999+ (₹100 delivery below)', '🎁 GOKULESH10 — 10% Off Auto on ₹1999+', '⭐ 10,000+ Happy Customers', '🫙 Fresh Homestyle Achar', '🌶️ Pure Spice Masalas', '🌺 Fragrant Mukhwas Collections'].map((t, i) => (
               <span key={`${ri}-${i}`} className="offer-item">{t}</span>
             ))
           )}
@@ -129,7 +129,7 @@ export default function Home() {
         <div className="container">
           <div className="features-grid">
             {[
-              { icon: '🚚', title: 'Free Delivery', sub: 'On orders above ₹499' },
+              { icon: '🚚', title: 'Free Delivery', sub: 'On orders ₹999+ (₹100 delivery under ₹999)' },
               { icon: '🌿', title: '100% Natural', sub: 'No artificial preservatives' },
               { icon: '🏺', title: 'Traditional Recipes', sub: 'Made with ancient wisdom' },
               { icon: '⭐', title: 'Quality Assured', sub: 'Tested & certified pure' },
@@ -202,8 +202,8 @@ export default function Home() {
       <div className="container">
         <div className="promo-banner">
           <div className="promo-text">
-            <h2>Get 10% off automatically on orders above ₹999!</h2>
-            <p>Use code below at checkout. Valid on orders above ₹999</p>
+            <h2>Get 10% off automatically on orders of ₹1999 or more!</h2>
+            <p>GOKULESH10 is applied at checkout — no manual code entry needed.</p>
             <div className="promo-code">GOKULESH10</div>
           </div>
           <Link to="/products" className="btn btn-lg" style={{ background: 'white', color: 'var(--primary)', flexShrink: 0 }}>

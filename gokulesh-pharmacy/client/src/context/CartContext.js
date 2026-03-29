@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import {
+  AUTO_COUPON,
+  getDeliveryChargeRupees,
+  rupeesUntilFreeDelivery,
+  rupeesUntilAutoDiscount
+} from '../constants/orderPricing';
 
 const CartContext = createContext();
-
-const AUTO_COUPON = {
-  code: 'GOKULESH10',
-  minSubtotal: 999,
-  percentOff: 10,
-};
 
 const cartReducer = (state, action) => {
   switch (action.type) {
@@ -56,6 +56,9 @@ export const CartProvider = ({ children }) => {
   const couponCode = isAutoCouponEligible ? AUTO_COUPON.code : null;
   const discount = isAutoCouponEligible ? Math.round((subtotal * AUTO_COUPON.percentOff) / 100) : 0;
   const discountedSubtotal = Math.max(0, subtotal - discount);
+  const deliveryCharge = getDeliveryChargeRupees(subtotal);
+  const untilFreeDelivery = rupeesUntilFreeDelivery(subtotal);
+  const untilAutoDiscount = rupeesUntilAutoDiscount(subtotal);
 
   const count = state.items.reduce((sum, i) => sum + i.qty, 0);
 
@@ -67,6 +70,9 @@ export const CartProvider = ({ children }) => {
         discount,
         discountedSubtotal,
         couponCode,
+        deliveryCharge,
+        untilFreeDelivery,
+        untilAutoDiscount,
         count,
         addItem,
         removeItem,

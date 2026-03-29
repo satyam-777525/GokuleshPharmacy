@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { adminGetOrders, adminUpdateOrderStatus } from '../../utils/api';
+import { formatPaymentMethod } from '../../utils/paymentLabels';
 import toast from 'react-hot-toast';
 
 const STATUSES = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
@@ -64,6 +65,7 @@ export default function AdminOrders() {
               <th>Order ID</th>
               <th>Customer</th>
               <th>Mobile</th>
+              <th>Payment</th>
               <th>Amount</th>
               <th>Date</th>
               <th>Status</th>
@@ -82,6 +84,7 @@ export default function AdminOrders() {
                   <td>#{o._id.slice(-8).toUpperCase()}</td>
                   <td>{o.user?.name || 'Guest'}</td>
                   <td>{o.shippingAddress?.mobile}</td>
+                  <td title={o.paymentMethod || 'COD'}>{formatPaymentMethod(o.paymentMethod)}</td>
                   <td>₹{o.totalAmount}</td>
                   <td>{new Date(o.createdAt).toLocaleDateString('en-IN')}</td>
                   <td>
@@ -107,8 +110,18 @@ export default function AdminOrders() {
                 </tr>
                 {expanded === o._id && (
                   <tr className="order-expand-row">
-                    <td colSpan={7}>
+                    <td colSpan={8}>
                       <div className="order-detail-expand">
+                        <div>
+                          <strong>Payment method:</strong>{' '}
+                          {formatPaymentMethod(o.paymentMethod)}
+                          {o.paymentDetails?.paymentMode && (
+                            <span style={{ color: 'var(--text-muted)' }}>
+                              {' '}
+                              · {String(o.paymentDetails.paymentMode)}
+                            </span>
+                          )}
+                        </div>
                         <div>
                           <strong>Items:</strong>{' '}
                           {o.items
@@ -138,7 +151,7 @@ export default function AdminOrders() {
             ))}
             {filteredOrders.length === 0 && (
               <tr>
-                <td colSpan={7} style={{ textAlign: 'center', padding: 24 }}>
+                <td colSpan={8} style={{ textAlign: 'center', padding: 24 }}>
                   No orders match your search.
                 </td>
               </tr>

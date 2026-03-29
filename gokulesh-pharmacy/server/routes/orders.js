@@ -8,12 +8,15 @@ const { createOrderForUser, OrderError } = require('../services/orderService');
 router.post('/', protect, async (req, res) => {
   try {
     const { items, shippingAddress, notes, paymentMethod, paymentDetails } = req.body;
+    // paymentMethod stored on Order and returned in API responses (admin / my-orders UI)
     const order = await createOrderForUser({
       userId: req.user._id,
       items,
       shippingAddress,
       notes,
-      paymentMethod: paymentMethod || 'COD',
+      paymentMethod: (typeof paymentMethod === 'string' && paymentMethod.trim())
+        ? paymentMethod.trim()
+        : 'COD',
       paymentDetails
     });
     res.status(201).json(order);
