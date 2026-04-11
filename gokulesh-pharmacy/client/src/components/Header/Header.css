@@ -83,7 +83,11 @@
   white-space: nowrap; border-bottom: 2px solid transparent;
 }
 .nav-inner a:hover { color: var(--accent-light); border-bottom-color: var(--accent); }
-.nav-inner a.active { color: var(--accent-light); }
+.nav-inner a.active {
+  color: var(--accent-light);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
 
 .mobile-search { display: none; }
 

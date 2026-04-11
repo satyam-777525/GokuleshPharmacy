@@ -70,7 +70,7 @@ export default function Home() {
                 <span>💳</span>
                 <span>
                   Secure Payments with{' '}
-                  <Link to="/policies#payment-gateway" className="trust-link">PhonePe</Link>
+                  <Link to="/payment-policy" className="trust-link">PhonePe</Link>
                 </span>
               </div>
             </div>

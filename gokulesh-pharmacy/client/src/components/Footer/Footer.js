@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaLeaf, FaFacebook, FaInstagram, FaWhatsapp, FaYoutube, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { CATEGORY_QUICK_LINKS } from '../../constants/categoryRoutes';
 import './Footer.css';
 
 export default function Footer() {
@@ -8,7 +9,6 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer-main">
         <div className="container footer-grid">
-          {/* Brand */}
           <div className="footer-brand">
             <div className="footer-logo">
               <div className="footer-logo-icon"><FaLeaf /></div>
@@ -19,65 +19,66 @@ export default function Footer() {
             </div>
             <p>We bring you the finest traditional Ayurvedic products — churan, goli, mukhwas, and more — crafted with ancient wisdom for modern wellness.</p>
             <div className="social-links">
-              <a href="https://facebook.com" target="_blank" rel="noreferrer"><FaFacebook /></a>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer"><FaInstagram /></a>
-              <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer"><FaWhatsapp /></a>
-              <a href="https://youtube.com" target="_blank" rel="noreferrer"><FaYoutube /></a>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><FaFacebook /></a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><FaInstagram /></a>
+              <a href="https://wa.me/919319376279" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><FaWhatsapp /></a>
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><FaYoutube /></a>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="footer-col">
+          <div className="footer-col footer-col-quick">
             <h4>Quick Links</h4>
-            <ul>
+            <ul className="footer-quick-links">
               <li><Link to="/">Home</Link></li>
               <li><Link to="/products">All Products</Link></li>
-              <li><Link to="/products?category=churan">Churan</Link></li>
-              <li><Link to="/products?category=goli">Goli</Link></li>
-              <li><Link to="/products?category=mukhwas">Mukhwas</Link></li>
+              {CATEGORY_QUICK_LINKS.map((c) => (
+                <li key={c.path}>
+                  <Link to={`/category/${c.path}`}>{c.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Policies */}
-          <div className="footer-col">
-            <h4>Policies</h4>
+          <div className="footer-col footer-col-policies">
+            <h4>Legal &amp; Policies</h4>
             <ul>
               <li><Link to="/policies">All Policies</Link></li>
-              <li><Link to="/policies#privacy">Privacy Policy</Link></li>
-              <li><Link to="/policies#terms">Terms & Conditions</Link></li>
-              <li><Link to="/policies#refund">Refund Policy</Link></li>
-              <li><Link to="/policies#shipping">Shipping Policy</Link></li>
-              <li><Link to="/policies#payment-gateway">Payment (PhonePe)</Link></li>
+              <li><Link to="/privacy-policy">Privacy Policy</Link></li>
+              <li><Link to="/terms-and-conditions">Terms &amp; Conditions</Link></li>
+              <li><Link to="/refund-policy">Refund &amp; Cancellation</Link></li>
+              <li><Link to="/shipping-policy">Shipping &amp; Delivery</Link></li>
+              <li><Link to="/payment-policy">Payments (PhonePe)</Link></li>
+              <li><Link to="/contact-us">Contact Us</Link></li>
             </ul>
           </div>
 
-          {/* Contact */}
-          <div className="footer-col">
-            <h4>Contact Us</h4>
+          <div className="footer-col footer-col-contact">
+            <h4>Contact</h4>
             <div className="contact-item">
-              <FaPhone />
-              <span>+91 93193 76279</span>
+              <FaPhone aria-hidden />
+              <a href="tel:+919319376279">+91 93193 76279</a>
             </div>
             <div className="contact-item">
-              <FaEnvelope />
-              <span>gokuleshpharmacy1954@gmail.com</span>
+              <FaEnvelope aria-hidden />
+              <a href="mailto:gokuleshpharmacy1954@gmail.com">gokuleshpharmacy1954@gmail.com</a>
             </div>
             <div className="contact-item">
-              <FaMapMarkerAlt />
+              <FaMapMarkerAlt aria-hidden />
               <span>121/13 Kishan Ganga lal Darwaja, Infront Of Saraswati Shishu Mandir School, Mathura-281001</span>
             </div>
           </div>
         </div>
       </div>
       <div className="footer-bottom">
-  <div className="container footer-bottom-inner">
-    <span>© 2024 Gokulesh Pharmacy. All Rights Reserved.</span>
-    <span>
-      Website Designed by <b>Satyam Varshney</b> |  
-      <a href="https://www.linkedin.com/in/satyam-varshney-5255a92b1/">Contact Developer</a>
-    </span>
-  </div>
-</div>
+        <div className="container footer-bottom-inner">
+          <span>© {new Date().getFullYear()} Gokulesh Pharmacy. All Rights Reserved.</span>
+          <span className="footer-credit">
+            Website Designed by <strong>Satyam Varshney</strong>
+            {' · '}
+            <a href="https://www.linkedin.com/in/satyam-varshney-5255a92b1/" target="_blank" rel="noopener noreferrer">Contact Developer</a>
+          </span>
+        </div>
+      </div>
     </footer>
   );
 }

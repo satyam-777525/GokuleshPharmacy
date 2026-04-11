@@ -1,0 +1,232 @@
+/* Shared layout for all legal / policy pages */
+.policy-page {
+  padding-bottom: 64px;
+}
+
+.policy-page-inner {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.policy-breadcrumb {
+  font-size: 13px;
+  margin-bottom: 20px;
+  color: var(--text-muted);
+}
+
+.policy-breadcrumb a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.policy-breadcrumb a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+.policy-breadcrumb span {
+  opacity: 0.5;
+  margin: 0 6px;
+}
+
+.policy-page-header {
+  margin-bottom: 24px;
+}
+
+.policy-page-header h1 {
+  font-family: var(--font-head);
+  font-size: clamp(1.65rem, 4vw, 2.1rem);
+  color: var(--text);
+  line-height: 1.25;
+  margin-bottom: 10px;
+}
+
+.policy-page-lead {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  max-width: 720px;
+}
+
+.policy-page-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: clamp(20px, 4vw, 36px);
+}
+
+.policy-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.policy-block {
+  margin-bottom: 28px;
+}
+
+.policy-block:last-child {
+  margin-bottom: 0;
+}
+
+.policy-block h2 {
+  font-family: var(--font-head);
+  font-size: 1.2rem;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.policy-block h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 18px 0 8px;
+}
+
+.policy-block p,
+.policy-block li {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text);
+}
+
+.policy-block p {
+  margin-bottom: 12px;
+}
+
+.policy-block ul,
+.policy-block ol {
+  padding-left: 1.35rem;
+  margin: 10px 0 14px;
+}
+
+.policy-block li {
+  margin-bottom: 10px;
+}
+
+.policy-block strong {
+  color: var(--text);
+}
+
+.policy-block a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.policy-block a:hover {
+  text-decoration: underline;
+}
+
+.policy-highlight-box {
+  background: linear-gradient(135deg, rgba(200, 97, 26, 0.08) 0%, rgba(232, 160, 32, 0.05) 100%);
+  border: 1px solid rgba(200, 97, 26, 0.18);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin: 20px 0;
+}
+
+.policy-page-actions {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Policies index (/policies) */
+.policies-index-intro {
+  font-size: 15px;
+  color: var(--text-muted);
+  max-width: 640px;
+  margin-bottom: 32px;
+  line-height: 1.65;
+}
+
+.policies-index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.policies-index-card {
+  display: block;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 22px 22px 20px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.policies-index-card:hover {
+  border-color: rgba(200, 97, 26, 0.45);
+  box-shadow: 0 8px 28px rgba(28, 16, 9, 0.08);
+  transform: translateY(-2px);
+}
+
+.policies-index-card h2 {
+  font-family: var(--font-head);
+  font-size: 1.1rem;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.policies-index-card p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.policies-index-card .policy-card-arrow {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* Contact page */
+.contact-grid {
+  display: grid;
+  gap: 20px;
+}
+
+@media (min-width: 640px) {
+  .contact-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.contact-card {
+  background: var(--bg-soft, rgba(0, 0, 0, 0.02));
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.contact-card h3 {
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+
+.contact-card p,
+.contact-card a {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.contact-card a {
+  color: var(--primary);
+  font-weight: 600;
+  word-break: break-word;
+}

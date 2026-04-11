@@ -8,9 +8,11 @@ dotenv.config();
 
 const app = express();
 
-// CORS (development-friendly: allow configured client + localhost:3000)
+const { normalizeClientBaseUrl } = require('./config/phonepeClient');
+
+// CORS: origins must match browser Origin header exactly (no trailing slash)
 const allowedOrigins = [
-  process.env.CLIENT_URL,
+  process.env.CLIENT_URL ? normalizeClientBaseUrl(process.env.CLIENT_URL) : null,
   'http://localhost:3000',
 ].filter(Boolean);
 
@@ -47,15 +49,19 @@ app.get('/', (req, res) => res.json({ message: 'Gokulesh Pharmacy API Running' }
 
 // Error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
   res.status(500).json({ message: 'Something went wrong!', error: err.message });
 });
 
 // Connect DB & Start Server
 const PORT = process.env.PORT || 5000;
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/gokulesh-pharmacy')
+mongoose
+  .connect(process.env.MONGO_URI || 'mongodb://localhost:27017/gokulesh-pharmacy')
   .then(() => {
     console.log('MongoDB connected');
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
   })
-  .catch(err => console.error('DB connection error:', err));
+  .catch(() => {
+    process.exit(1);
+  });

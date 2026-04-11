@@ -3,18 +3,24 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaLeaf, FaShoppingCart, FaUser, FaBars, FaTimes, FaSearch, FaPhoneAlt } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
+import { CATEGORY_QUICK_LINKS } from '../../constants/categoryRoutes';
 import './Header.css';
 
 const NAV_LINKS = [
   { to: '/', label: 'Home' },
   { to: '/products', label: 'All Products' },
-  { to: '/products?cat=churan', label: 'Churan' },
-  { to: '/products?cat=goli', label: 'Goli & Tablets' },
-  { to: '/products?cat=mukhwas', label: 'Mukhwas' },
-  { to: '/products?cat=achar', label: 'Achar & Pickles' },
-  { to: '/products?cat=masala', label: 'Masala' },
-  { to: '/products?featured=true', label: '🔥 Offers' },
+  ...CATEGORY_QUICK_LINKS.map((c) => ({
+    to: `/category/${c.path}`,
+    label: c.label
+  }))
 ];
+
+function linkIsActive(pathname, to) {
+  if (to === '/') return pathname === '/';
+  if (to === '/products') return pathname === '/products';
+  if (to.startsWith('/category/')) return pathname === to;
+  return pathname === to;
+}
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -66,7 +72,7 @@ export default function Header() {
               type="text"
               placeholder="Search churan, mukhwas, achar, masala..."
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             <button type="submit"><FaSearch /></button>
           </form>
@@ -79,7 +85,7 @@ export default function Header() {
 
             {user ? (
               <div className="user-menu-wrap">
-                <button className="user-btn" onClick={() => setShowUserMenu(!showUserMenu)}>
+                <button type="button" className="user-btn" onClick={() => setShowUserMenu(!showUserMenu)}>
                   <div className="user-btn-icon">{initials}</div>
                   <span className="user-name">{user.name?.split(' ')[0] || 'Account'}</span>
                 </button>
@@ -96,7 +102,7 @@ export default function Header() {
                         ⚙️ Admin Panel
                       </Link>
                     )}
-                    <button onClick={handleLogout} className="logout-btn">
+                    <button type="button" onClick={handleLogout} className="logout-btn">
                       🚪 Logout
                     </button>
                   </div>
@@ -110,20 +116,20 @@ export default function Header() {
               </Link>
             )}
 
-            <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+            <button type="button" className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Close menu' : 'Open menu'}>
               {menuOpen ? <FaTimes /> : <FaBars />}
             </button>
           </div>
         </div>
       </div>
 
-      <nav className={`header-nav ${menuOpen ? 'open' : ''}`}>
+      <nav className={`header-nav ${menuOpen ? 'open' : ''}`} aria-label="Main navigation">
         <div className="container nav-inner">
-          {NAV_LINKS.map(link => (
+          {NAV_LINKS.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className={location.pathname === link.to ? 'active' : ''}
+              className={linkIsActive(location.pathname, link.to) ? 'active' : ''}
               onClick={() => setMenuOpen(false)}
             >
               {link.label}
@@ -136,7 +142,7 @@ export default function Header() {
               type="text"
               placeholder="Search products..."
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             <button type="submit"><FaSearch /></button>
           </form>

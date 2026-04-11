@@ -10,6 +10,7 @@ import Footer from './components/Footer/Footer';
 import Home from './pages/Home/Home';
 import ProductsPage from './pages/Product/ProductsPage';
 import ProductDetail from './pages/Product/ProductDetail';
+import CategoryPage from './pages/Product/CategoryPage';
 import CartPage from './pages/Cart/CartPage';
 import CheckoutPage from './pages/Checkout/CheckoutPage';
 import PhonePeResultPage from './pages/Checkout/PhonePeResultPage';
@@ -23,7 +24,13 @@ import AdminProducts from './pages/Admin/AdminProducts';
 import AdminCategories from './pages/Admin/AdminCategories';
 import AdminOrders from './pages/Admin/AdminOrders';
 import AdminUsers from './pages/Admin/AdminUsers';
-import PoliciesPage from './pages/Policies/PoliciesPage';
+import PoliciesIndexPage from './pages/Policies/PoliciesIndexPage';
+import PrivacyPolicyPage from './pages/Policies/PrivacyPolicyPage';
+import TermsAndConditionsPage from './pages/Policies/TermsAndConditionsPage';
+import RefundPolicyPage from './pages/Policies/RefundPolicyPage';
+import ShippingPolicyPage from './pages/Policies/ShippingPolicyPage';
+import PaymentPolicyPage from './pages/Policies/PaymentPolicyPage';
+import ContactUsPage from './pages/Policies/ContactUsPage';
 import './App.css';
 
 const ProtectedRoute = ({ children }) => {
@@ -73,6 +80,7 @@ function AppContent() {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/products" element={<ProductsPage />} />
+                  <Route path="/category/:name" element={<CategoryPage />} />
                   <Route path="/products/:slug" element={<ProductDetail />} />
                   <Route path="/cart" element={<CartPage />} />
                   <Route
@@ -109,11 +117,14 @@ function AppContent() {
                       </ProtectedRoute>
                     }
                   />
-                  <Route path="/policies" element={<PoliciesPage />} />
-                  <Route path="/privacy-policy" element={<PoliciesPage />} />
-                  <Route path="/terms" element={<PoliciesPage />} />
-                  <Route path="/refund-policy" element={<PoliciesPage />} />
-                  <Route path="/shipping-policy" element={<PoliciesPage />} />
+                  <Route path="/policies" element={<PoliciesIndexPage />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                  <Route path="/terms-and-conditions" element={<TermsAndConditionsPage />} />
+                  <Route path="/terms" element={<Navigate to="/terms-and-conditions" replace />} />
+                  <Route path="/refund-policy" element={<RefundPolicyPage />} />
+                  <Route path="/shipping-policy" element={<ShippingPolicyPage />} />
+                  <Route path="/payment-policy" element={<PaymentPolicyPage />} />
+                  <Route path="/contact-us" element={<ContactUsPage />} />
                 </Routes>
               </main>
               <Footer />
